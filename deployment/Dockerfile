@@ -9,4 +9,4 @@ RUN go mod download
 COPY . .
 RUN CGO_ENABLED=0 go build -o main ./cmd/server/main.go
 
-CMD ["./main", "serve", "--http=0.0.0.0:8090"]
+CMD ["./main", "serve", "--http=0.0.0.0:9999"]

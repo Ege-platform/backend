@@ -9,4 +9,9 @@ services:
     env_file:
       - ../.env
     ports:
-      - "8090:8090"
+      - "9999:9999"
+    volumes:
+      - ../pb_data:/app/pb_data
+  
+volumes:
+  pb_data:
