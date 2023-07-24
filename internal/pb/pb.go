@@ -28,6 +28,9 @@ func (p *PB) SetupMiddlewares() {
 		e.Router.Use(middleware.LoggerMiddleware())
 		e.Router.Use(middleware.DBSessionMiddleware(p.Dao()))
 		e.Router.Use(mw.Recover())
+		e.Router.Use(mw.CORSWithConfig(mw.CORSConfig{
+			AllowOrigins: []string{"http://localhost:5173", "http://larek.itatmisis.ru:12348", "http://larek.itatmisis.ru:12347"},
+		}))
 		return nil
 	})
 }
