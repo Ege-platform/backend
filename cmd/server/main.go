@@ -12,13 +12,13 @@ import (
 func main() {
 	cfg, err := config.NewConfig()
 	if err != nil {
-		fmt.Printf("Error while creating config: %v", err)
+		fmt.Printf("Error while creating config: %v\n", err)
 		os.Exit(-1)
 	}
 
 	err = logging.Init(cfg)
 	if err != nil {
-		fmt.Printf("Error while initializing logging: %v", err)
+		fmt.Printf("Error while initializing logging: %v\n", err)
 		os.Exit(-1)
 	}
 
@@ -28,6 +28,6 @@ func main() {
 	router.SetupRoutes()
 
 	if err := p.Run(); err != nil {
-		logging.Log.Fatalf("Error starting server: %v", err)
+		logging.Log.Fatalf("Error starting server: %v\n", err)
 	}
 }

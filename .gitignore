@@ -1,4 +1,5 @@
 main
 *.log
-.env
+*.env
 pb_data
+tmp

@@ -1,5 +1,5 @@
 build:
-	go build cmd/server/main.go
+	CGO_ENABLED=0 go build -o main ./cmd/server/main.go
 
 run: build
-	./main serve
+	./main serve --http=0.0.0.0:9999

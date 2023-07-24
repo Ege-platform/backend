@@ -5,11 +5,11 @@ services:
     restart: always
     build: 
       context: ../
-      dockerfile: ./deployment/Dockerfile
+      dockerfile: ./deployment/Dockerfile.dev
     env_file:
-      - ../.env
+      - ../dev.env
     environment:
-      - APP_MODE=prod
+      - APP_MODE=dev
     ports:
       - "9999:9999"
     volumes:

@@ -7,15 +7,20 @@ import (
 )
 
 type Config struct {
-	LogLevel        string
+	LogLevel string
+	AppMode  string
+
 	PBAdminEmail    string
 	PBAdminPassword string
 	PBDebug         bool
-	ClientID        string
-	ClientSecret    string
-	RedirectURI     string
-	AuthURI         string
-	TokenURI        string
+
+	ClientID     string
+	ClientSecret string
+	RedirectURI  string
+	AuthURI      string
+	TokenURI     string
+
+	SecretKey string
 }
 
 func NewConfig() (*Config, error) {
@@ -34,5 +39,7 @@ func NewConfig() (*Config, error) {
 		RedirectURI:     os.Getenv("REDIRECT_URI"),
 		AuthURI:         os.Getenv("AUTH_URI"),
 		TokenURI:        os.Getenv("TOKEN_URI"),
+		AppMode:         os.Getenv("APP_MODE"),
+		SecretKey:       os.Getenv("SECRET_KEY"),
 	}, nil
 }

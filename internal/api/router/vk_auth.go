@@ -17,9 +17,13 @@ func (r *Router) AuthWithVK(c echo.Context) error {
 func (r *Router) InternalAuth(c echo.Context) error {
 	claims, err := controller.GetVKClaims(c, r.Cfg)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, model.ErrorResponse{Message: err.Error(), Err: err})
-		return err
+		return c.JSON(http.StatusUnauthorized, model.ErrorResponse{Message: err.Error(), Err: err})
 	}
-	c.JSON(http.StatusOK, claims)
-	return nil
+
+	loginCredentials, err := controller.GenerateLoginCredentials(c, claims, r.Cfg)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, model.ErrorResponse{Message: err.Error(), Err: err})
+	}
+
+	return c.JSON(http.StatusOK, loginCredentials)
 }
