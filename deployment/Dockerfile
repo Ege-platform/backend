@@ -6,8 +6,8 @@ COPY go.sum .
 
 RUN go mod download
 
-COPY cmd .
-COPY internal .
+COPY cmd ./cmd
+COPY internal ./internal
 COPY Makefile .
 COPY .env .
 
