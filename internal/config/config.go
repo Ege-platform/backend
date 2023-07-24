@@ -17,6 +17,7 @@ type Config struct {
 	ClientID     string
 	ClientSecret string
 	RedirectURI  string
+	BaseURL      string
 	AuthURI      string
 	TokenURI     string
 
@@ -37,6 +38,7 @@ func NewConfig() (*Config, error) {
 		ClientID:        os.Getenv("CLIENT_ID"),
 		ClientSecret:    os.Getenv("CLIENT_SECRET"),
 		RedirectURI:     os.Getenv("REDIRECT_URI"),
+		BaseURL:         os.Getenv("BASE_URL"),
 		AuthURI:         os.Getenv("AUTH_URI"),
 		TokenURI:        os.Getenv("TOKEN_URI"),
 		AppMode:         os.Getenv("APP_MODE"),

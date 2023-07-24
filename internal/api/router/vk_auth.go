@@ -19,10 +19,10 @@ func (r *Router) InternalAuth(c echo.Context) error {
 		return c.JSON(http.StatusUnauthorized, model.ErrorResponse{Message: err.Error(), Err: err})
 	}
 
-	loginCredentials, err := controller.GenerateLoginCredentials(c, claims, r.Cfg)
+	_, err = controller.GenerateLoginCredentials(c, claims, r.Cfg)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, model.ErrorResponse{Message: err.Error(), Err: err})
 	}
 
-	return c.JSON(http.StatusOK, loginCredentials)
+	return c.Redirect(http.StatusMovedPermanently, r.Cfg.BaseURL)
 }
