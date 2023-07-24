@@ -10,8 +10,7 @@ import (
 )
 
 func (r *Router) AuthWithVK(c echo.Context) error {
-	c.Redirect(http.StatusTemporaryRedirect, fmt.Sprintf(r.Cfg.AuthURI, r.Cfg.ClientID, r.Cfg.RedirectURI))
-	return nil
+	return c.JSON(http.StatusOK, fmt.Sprintf(r.Cfg.AuthURI, r.Cfg.ClientID, r.Cfg.RedirectURI))
 }
 
 func (r *Router) InternalAuth(c echo.Context) error {
