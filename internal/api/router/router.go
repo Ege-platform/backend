@@ -21,8 +21,10 @@ func NewRouter(p *pb.PB, cfg *config.Config) *Router {
 
 func (r *Router) SetupRoutes() {
 	r.Pb.OnBeforeServe().Add(func(e *core.ServeEvent) error {
-		e.Router.GET("/api/v1/auth_vk", r.AuthWithVK)
+		e.Router.POST("/api/v1/auth_vk", r.AuthWithVK)
 		e.Router.GET("/auth_vk_handle", r.InternalAuth)
+
+		e.Router.POST("/api/v1/auth_tg", r.AuthWithTG)
 		return nil
 	})
 }

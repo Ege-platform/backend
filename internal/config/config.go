@@ -14,14 +14,13 @@ type Config struct {
 	PBAdminPassword string
 	PBDebug         bool
 
-	ClientID     string
-	ClientSecret string
-	RedirectURI  string
-	BaseURL      string
-	AuthURI      string
-	TokenURI     string
+	BaseURL string
 
-	SecretKey string
+	VKClientID     string
+	VKClientSecret string
+	VKRedirectURI  string
+	VKAuthURI      string
+	VKTokenURI     string
 }
 
 func NewConfig() (*Config, error) {
@@ -35,13 +34,12 @@ func NewConfig() (*Config, error) {
 		LogLevel:        os.Getenv("LOG_LEVEL"),
 		PBAdminEmail:    os.Getenv("PB_ADMIN_EMAIL"),
 		PBAdminPassword: os.Getenv("PB_ADMIN_PASSWORD"),
-		ClientID:        os.Getenv("CLIENT_ID"),
-		ClientSecret:    os.Getenv("CLIENT_SECRET"),
-		RedirectURI:     os.Getenv("REDIRECT_URI"),
+		VKClientID:      os.Getenv("VK_CLIENT_ID"),
+		VKClientSecret:  os.Getenv("VK_CLIENT_SECRET"),
+		VKRedirectURI:   os.Getenv("VK_REDIRECT_URI"),
 		BaseURL:         os.Getenv("BASE_URL"),
-		AuthURI:         os.Getenv("AUTH_URI"),
-		TokenURI:        os.Getenv("TOKEN_URI"),
+		VKAuthURI:       os.Getenv("VK_AUTH_URI"),
+		VKTokenURI:      os.Getenv("VK_TOKEN_URI"),
 		AppMode:         os.Getenv("APP_MODE"),
-		SecretKey:       os.Getenv("SECRET_KEY"),
 	}, nil
 }
