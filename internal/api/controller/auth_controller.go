@@ -51,6 +51,8 @@ func GetClaimsFromVK(c echo.Context, cfg *config.Config) (*model.Claims, error) 
 		return nil, err
 	}
 
+	logging.Log.Debugf("Access token from %d: %s", vkClaims.UserID, vkClaims.AccessToken)
+
 	return &model.Claims{
 		ID:          vkClaims.UserID,
 		AccessToken: vkClaims.AccessToken,
