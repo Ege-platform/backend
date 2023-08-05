@@ -8,7 +8,7 @@ import (
 
 type Config struct {
 	LogLevel string
-	AppMode  string
+	// AppMode  string
 
 	PBAdminEmail    string
 	PBAdminPassword string
@@ -21,6 +21,8 @@ type Config struct {
 	VKRedirectURI  string
 	VKAuthURI      string
 	VKTokenURI     string
+
+	JwtSecret string
 }
 
 func NewConfig() (*Config, error) {
@@ -40,6 +42,7 @@ func NewConfig() (*Config, error) {
 		BaseURL:         os.Getenv("BASE_URL"),
 		VKAuthURI:       os.Getenv("VK_AUTH_URI"),
 		VKTokenURI:      os.Getenv("VK_TOKEN_URI"),
-		AppMode:         os.Getenv("APP_MODE"),
+		JwtSecret:       os.Getenv("JWT_SECRET"),
+		// AppMode:         os.Getenv("APP_MODE"),
 	}, nil
 }

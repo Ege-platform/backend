@@ -1,7 +1,7 @@
 package model
 
 type Claims struct {
-	ID          int    `json:"id"`
+	Username    string `json:"username"`
 	AccessToken string `json:"access_token"`
 	Name        string `json:"name"`
 }

@@ -13,13 +13,8 @@ func (r *Router) AuthWithVK(c echo.Context) error {
 	return c.JSON(http.StatusOK, fmt.Sprintf(r.Cfg.VKAuthURI, r.Cfg.VKClientID, r.Cfg.VKRedirectURI))
 }
 
-func (r *Router) InternalAuth(c echo.Context) error {
-	claims, err := controller.GetClaimsFromVK(c, r.Cfg)
-	if err != nil {
-		return c.JSON(http.StatusUnauthorized, model.ErrorResponse{Err: err.Error()})
-	}
-
-	err = controller.CreateUser(c, claims)
+func (r *Router) InternalVKAuth(c echo.Context) error {
+	err := controller.AuthWithVK(c, r.Cfg)
 	if err != nil {
 		return c.JSON(http.StatusUnauthorized, model.ErrorResponse{Err: err.Error()})
 	}
@@ -28,15 +23,19 @@ func (r *Router) InternalAuth(c echo.Context) error {
 }
 
 func (r *Router) AuthWithTG(c echo.Context) error {
-	claims, err := controller.GetClaimsFromTG(c, r.Cfg)
-	if err != nil {
-		return c.JSON(http.StatusUnauthorized, model.ErrorResponse{Err: err.Error()})
-	}
-
-	err = controller.CreateUser(c, claims)
+	err := controller.AuthWithTG(c, r.Cfg)
 	if err != nil {
 		return c.JSON(http.StatusUnauthorized, model.ErrorResponse{Err: err.Error()})
 	}
 
 	return c.Redirect(http.StatusMovedPermanently, r.Cfg.BaseURL)
+}
+
+func (r *Router) GetAccessToken(c echo.Context) error {
+	accessToken, err := controller.GetAccessToken(c)
+	if err != nil {
+		return c.JSON(http.StatusNotFound, model.ErrorResponse{Err: err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, accessToken)
 }
