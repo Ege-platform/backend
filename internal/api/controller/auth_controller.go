@@ -15,13 +15,13 @@ import (
 	"github.com/pocketbase/pocketbase/daos"
 )
 
-func AuthWithVK(c echo.Context, cfg *config.Config) error {
+func AuthWithVK(c echo.Context, cfg *config.Config) (string, error) {
 	code := c.QueryParams().Get("code")
 
 	response, err := http.Get(fmt.Sprintf(cfg.VKTokenURI, cfg.VKClientID, cfg.VKClientSecret, cfg.VKRedirectURI, code))
 	if err != nil {
 		logging.Log.Errorf("Can't get token: %v", err)
-		return err
+		return "", err
 	}
 
 	decoder := json.NewDecoder(response.Body)
@@ -29,12 +29,12 @@ func AuthWithVK(c echo.Context, cfg *config.Config) error {
 	vkClaims := &model.VKClaims{}
 	if err := decoder.Decode(vkClaims); err != nil {
 		logging.Log.Errorf("Can't parse json: %v", err)
-		return err
+		return "", err
 	}
 
 	if vkClaims.AccessToken == "" {
 		logging.Log.Debug("Empty claims")
-		return errors.New("unauthorized")
+		return "", errors.New("unauthorized")
 	}
 
 	vk := api.NewVK(vkClaims.AccessToken)
@@ -44,7 +44,7 @@ func AuthWithVK(c echo.Context, cfg *config.Config) error {
 	})
 	if err != nil {
 		logging.Log.Errorf("Can't get user name from VK: %v", err)
-		return err
+		return "", err
 	}
 	claims := &model.Claims{
 		Username:    fmt.Sprintf("%d", vkClaims.UserID) + "VK",
@@ -52,16 +52,16 @@ func AuthWithVK(c echo.Context, cfg *config.Config) error {
 		Name:        userVK[0].FirstName + " " + userVK[0].LastName,
 	}
 
-	return service.AuthenticateUser(c, claims, cfg.JwtSecret)
+	return service.AuthenticateUser(c, claims, cfg.JwtSecret), nil
 }
 
-func AuthWithTG(c echo.Context, cfg *config.Config) error {
+func AuthWithTG(c echo.Context, cfg *config.Config) (string, error) {
 	decoder := json.NewDecoder(c.Request().Body)
 
 	tgClaims := &model.TGClaims{}
 	if err := decoder.Decode(tgClaims); err != nil {
 		logging.Log.Errorf("Can't read body: %v", err)
-		return err
+		return "", err
 	}
 
 	claims := &model.Claims{
@@ -70,7 +70,7 @@ func AuthWithTG(c echo.Context, cfg *config.Config) error {
 		Name:        tgClaims.FirstName + " " + tgClaims.LastName,
 	}
 
-	return service.AuthenticateUser(c, claims, cfg.JwtSecret)
+	return service.AuthenticateUser(c, claims, cfg.JwtSecret), nil
 }
 
 func GetAccessToken(c echo.Context) (string, error) {

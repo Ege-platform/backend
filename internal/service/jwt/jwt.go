@@ -5,7 +5,6 @@ import (
 	"ege_platform/internal/logging"
 	"ege_platform/internal/model"
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -20,7 +19,7 @@ func CreateAccessToken(username string, secret string) (string, error) {
 		Username: username,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 24)),
-			Subject:   fmt.Sprintf("%d", username),
+			Subject:   username,
 		},
 	}
 
@@ -42,21 +41,31 @@ func VerifyAccessToken(accessTokenString string, secret string) (*jwt.Token, err
 	return accessToken, nil
 }
 
-func AuthenticateUser(c echo.Context, claims *model.Claims, secret string) error {
+func AuthenticateUser(c echo.Context, claims *model.Claims, secret string) string {
 	dao := c.Get("dao").(*daos.Dao)
 
 	accessToken, err := CreateAccessToken(claims.Username, secret)
 	if err != nil {
 		logging.Log.Errorf("Can't create access token: %v", err)
-		return err
+		return ""
 	}
 
 	claims.AccessToken = accessToken
 
 	userPB, exists := dao.FindAuthRecordByUsername("users", claims.Username)
 	if exists != nil {
-		return crud.CreateUser(dao, claims)
+		err = crud.CreateUser(dao, claims)
+		if err != nil {
+			logging.Log.Errorf("Can't create user record: %v", err)
+			return ""
+		}
 	}
 
-	return crud.UpdateUserToken(dao, claims, userPB)
+	err = crud.UpdateUserToken(dao, claims, userPB)
+	if err != nil {
+		logging.Log.Errorf("Can't update user token: %v", err)
+		return ""
+	}
+
+	return accessToken
 }

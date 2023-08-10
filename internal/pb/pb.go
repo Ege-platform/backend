@@ -29,7 +29,7 @@ func (p *PB) SetupMiddlewares() {
 		e.Router.Use(middleware.DBSessionMiddleware(p.Dao()))
 		e.Router.Use(mw.Recover())
 		e.Router.Use(mw.CORSWithConfig(mw.CORSConfig{
-			AllowOrigins:     []string{"http://localhost:5173", "http://larek.itatmisis.ru", "http://larek.itatmisis.ru:12347"},
+			AllowOrigins:     []string{"http://localhost:5173", "http://larek.itatmisis.ru", "http://larek.itatmisis.ru:12347", "https://1504391-cj95950.tw1.ru"},
 			AllowMethods:     []string{"*"},
 			AllowCredentials: true,
 			AllowHeaders:     []string{"*"},

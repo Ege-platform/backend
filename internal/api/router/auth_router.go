@@ -14,21 +14,21 @@ func (r *Router) AuthWithVK(c echo.Context) error {
 }
 
 func (r *Router) InternalVKAuth(c echo.Context) error {
-	err := controller.AuthWithVK(c, r.Cfg)
+	accessToken, err := controller.AuthWithVK(c, r.Cfg)
 	if err != nil {
 		return c.JSON(http.StatusUnauthorized, model.ErrorResponse{Err: err.Error()})
 	}
 
-	return c.Redirect(http.StatusMovedPermanently, r.Cfg.BaseURL)
+	return c.Redirect(http.StatusOK, accessToken)
 }
 
 func (r *Router) AuthWithTG(c echo.Context) error {
-	err := controller.AuthWithTG(c, r.Cfg)
+	accessToken, err := controller.AuthWithTG(c, r.Cfg)
 	if err != nil {
 		return c.JSON(http.StatusUnauthorized, model.ErrorResponse{Err: err.Error()})
 	}
 
-	return c.Redirect(http.StatusMovedPermanently, r.Cfg.BaseURL)
+	return c.Redirect(http.StatusOK, accessToken)
 }
 
 func (r *Router) GetAccessToken(c echo.Context) error {
