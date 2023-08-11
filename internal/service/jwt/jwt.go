@@ -4,7 +4,10 @@ import (
 	"ege_platform/internal/crud"
 	"ege_platform/internal/logging"
 	"ege_platform/internal/model"
+	"encoding/json"
 	"errors"
+	"net/http"
+	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -41,31 +44,52 @@ func VerifyAccessToken(accessTokenString string, secret string) (*jwt.Token, err
 	return accessToken, nil
 }
 
-func AuthenticateUser(c echo.Context, claims *model.Claims, secret string) string {
+func AuthenticateUser(c echo.Context, claims *model.Claims, secret string, cookieDomain string) error {
 	dao := c.Get("dao").(*daos.Dao)
 
 	accessToken, err := CreateAccessToken(claims.Username, secret)
 	if err != nil {
 		logging.Log.Errorf("Can't create access token: %v", err)
-		return ""
+		return err
 	}
 
 	claims.AccessToken = accessToken
 
 	userPB, exists := dao.FindAuthRecordByUsername("users", claims.Username)
+	user := &model.User{}
 	if exists != nil {
-		err = crud.CreateUser(dao, claims)
+		user, err = crud.CreateUser(dao, claims)
 		if err != nil {
 			logging.Log.Errorf("Can't create user record: %v", err)
-			return ""
+			return err
+		}
+	} else {
+		user, err = crud.UpdateUserToken(dao, claims, userPB)
+		if err != nil {
+			logging.Log.Errorf("Can't update user token: %v", err)
+			return err
 		}
 	}
 
-	err = crud.UpdateUserToken(dao, claims, userPB)
-	if err != nil {
-		logging.Log.Errorf("Can't update user token: %v", err)
-		return ""
+	authResponse := &model.AuthResponse{
+		Token: accessToken,
+		Model: user,
 	}
 
-	return accessToken
+	cookie := new(http.Cookie)
+	cookie.Name = "pb_auth"
+	jsonResponse, err := json.Marshal(authResponse)
+	if err != nil {
+		logging.Log.Errorf("Can't marshal auth response: %v", err)
+		return err
+	}
+	value := "\"" + strings.ReplaceAll(string(jsonResponse), "\"", "'") + "\""
+
+	cookie.Value = value
+	logging.Log.Debugf("Cookie value: %v", value)
+	cookie.Expires = time.Now().Add(time.Minute * 5)
+	c.SetCookie(cookie)
+	cookie.Domain = cookieDomain
+
+	return nil
 }
